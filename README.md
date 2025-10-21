@@ -2,7 +2,14 @@
 
 Красивый, современный и цветной дашборд для Home Assistant с градиентным дизайном и анимациями.
 
+[![GitHub Release](https://img.shields.io/github/v/release/YOUR_USERNAME/smart-home-dashboard-card?style=flat-square)](https://github.com/YOUR_USERNAME/smart-home-dashboard-card/releases)
+[![GitHub Stars](https://img.shields.io/github/stars/YOUR_USERNAME/smart-home-dashboard-card?style=flat-square)](https://github.com/YOUR_USERNAME/smart-home-dashboard-card/stargazers)
+[![License](https://img.shields.io/github/license/YOUR_USERNAME/smart-home-dashboard-card?style=flat-square)](LICENSE)
+[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2021.12%2B-blue?style=flat-square)](https://www.home-assistant.io/)
+
 ![Dashboard Preview](https://via.placeholder.com/800x400/667eea/ffffff?text=Smart+Home+Dashboard)
+
+> **Примечание:** Замените `YOUR_USERNAME` на ваше имя пользователя GitHub во всех файлах!
 
 ## ✨ Особенности
 
@@ -17,7 +24,22 @@
 
 ## 📦 Установка
 
-### Способ 1: Ручная установка
+### Способ 1: Из GitHub (рекомендуется)
+
+Подробная инструкция: [INSTALLATION_FROM_GITHUB.md](INSTALLATION_FROM_GITHUB.md)
+
+**Быстрая установка:**
+
+```powershell
+# Скачать файл в /config/www/
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/YOUR_USERNAME/smart-home-dashboard-card/main/smart-home-dashboard-card.js" -OutFile "smart-home-dashboard-card.js"
+```
+
+Затем:
+1. Добавьте ресурс: `/local/smart-home-dashboard-card.js` (JavaScript Module)
+2. Перезагрузите браузер (Ctrl + F5)
+
+### Способ 2: Ручная установка
 
 1. **Скопируйте файл карточки**
    - Скопируйте файл `smart-home-dashboard-card.js` в папку `/config/www/` вашего Home Assistant
@@ -34,9 +56,14 @@
 
 3. **Перезагрузите браузер** (Ctrl + F5)
 
-### Способ 2: Через HACS (Home Assistant Community Store)
+### Способ 3: Через HACS (Home Assistant Community Store)
 
 *Скоро будет доступно*
+
+После добавления в HACS:
+1. HACS → Frontend → "+" → Найдите "Smart Home Dashboard Card"
+2. Установите
+3. Перезагрузите Home Assistant
 
 ## 🎯 Использование
 

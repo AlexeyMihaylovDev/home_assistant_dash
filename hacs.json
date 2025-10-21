@@ -1,0 +1,7 @@
+{
+  "name": "Smart Home Dashboard Card",
+  "render_readme": true,
+  "filename": "smart-home-dashboard-card.js",
+  "homeassistant": "2021.12.0"
+}
+

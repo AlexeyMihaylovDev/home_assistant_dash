@@ -26,9 +26,9 @@ class SmartHomeDashboardCard extends HTMLElement {
     this.currentTime = new Date();
     if (this.shadowRoot && this.shadowRoot.querySelector('.clock-time')) {
       this.shadowRoot.querySelector('.clock-time').textContent = 
-        this.currentTime.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+        this.currentTime.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
       this.shadowRoot.querySelector('.clock-date').textContent = 
-        this.currentTime.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+        this.formatDate();
     }
   }
 
@@ -38,383 +38,261 @@ class SmartHomeDashboardCard extends HTMLElement {
     }
 
     const rooms = this.config.rooms || [];
-    const title = this.config.title || 'Умный Дом';
+    const title = this.config.title || 'הבית החכם';
 
     this.shadowRoot.innerHTML = `
       <style>
+        * {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+
         :host {
           display: block;
-          font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          direction: rtl;
         }
 
-        .dashboard-wrapper {
+        .dashboard-container {
           display: flex;
-          min-height: 600px;
-          background: linear-gradient(135deg, #ff0844 0%, #ffb199 50%, #ffd89b 100%);
-          border-radius: 24px;
+          min-height: 700px;
+          background: linear-gradient(135deg, #8b5cf6 0%, #d946a6 35%, #f97583 65%, #ff8a80 100%);
+          border-radius: 0;
           overflow: hidden;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
-        /* ═══════════════════════════════════════
-           ЛЕВАЯ БОКОВАЯ ПАНЕЛЬ
-           ═══════════════════════════════════════ */
-        .sidebar {
-          width: 280px;
-          background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
-          padding: 32px 24px;
+        /* ПРАВАЯ ПАНЕЛЬ (для RTL) */
+        .left-panel {
+          width: 340px;
+          background: linear-gradient(180deg, rgba(139, 92, 246, 0.9) 0%, rgba(124, 58, 237, 0.9) 100%);
+          backdrop-filter: blur(20px);
+          padding: 40px 28px;
           display: flex;
           flex-direction: column;
           color: white;
-          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+          box-shadow: -4px 0 30px rgba(0, 0, 0, 0.1);
         }
 
-        /* Часы */
-        .clock {
-          margin-bottom: 32px;
+        /* Время */
+        .time-display {
+          margin-bottom: 20px;
         }
 
-        .clock-time {
-          font-size: 48px;
-          font-weight: 700;
-          margin: 0;
+        .time-display h1 {
+          font-size: 64px;
+          font-weight: 300;
           line-height: 1;
-          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+          margin-bottom: 8px;
         }
 
-        .clock-date {
+        .date-display {
+          font-size: 15px;
+          opacity: 0.95;
+          font-weight: 400;
+        }
+
+        .week-number {
           font-size: 14px;
-          opacity: 0.9;
-          margin-top: 8px;
-        }
-
-        .week-info {
-          font-size: 13px;
-          opacity: 0.8;
-          margin-top: 4px;
+          opacity: 0.85;
+          margin-top: 6px;
         }
 
         /* Приветствие */
-        .greeting {
-          font-size: 16px;
-          margin: 16px 0;
-          padding: 12px;
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 12px;
+        .greeting-box {
+          background: rgba(255, 255, 255, 0.15);
           backdrop-filter: blur(10px);
+          border-radius: 16px;
+          padding: 14px 16px;
+          margin-bottom: 24px;
+          font-size: 15px;
         }
 
-        /* Погода на боковой панели */
-        .sidebar-weather {
+        /* Погода */
+        .weather-widget {
+          background: rgba(255, 255, 255, 0.15);
+          backdrop-filter: blur(10px);
+          border-radius: 20px;
+          padding: 20px;
+          margin-bottom: 24px;
+        }
+
+        .weather-main-info {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 16px;
+        }
+
+        .weather-icon-large {
+          font-size: 52px;
+        }
+
+        .weather-temp-display {
+          text-align: left;
+        }
+
+        .weather-temp-display h2 {
+          font-size: 42px;
+          font-weight: 300;
+        }
+
+        .weather-condition {
+          font-size: 13px;
+          opacity: 0.9;
+          margin-top: 4px;
+        }
+
+        .weather-details-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+          font-size: 13px;
+          opacity: 0.9;
+        }
+
+        .weather-detail-item {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        /* Системная информация */
+        .system-info-section {
+          display: flex;
+          gap: 12px;
+          margin-bottom: 24px;
+        }
+
+        .info-card {
+          flex: 1;
           background: rgba(255, 255, 255, 0.15);
           backdrop-filter: blur(10px);
           border-radius: 16px;
           padding: 16px;
-          margin-bottom: 24px;
-          border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .weather-main {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-
-        .weather-icon-big {
-          font-size: 48px;
-        }
-
-        .weather-temp-big {
-          font-size: 36px;
-          font-weight: 700;
-        }
-
-        .weather-details {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 8px;
-          margin-top: 12px;
-          font-size: 12px;
-          opacity: 0.9;
-        }
-
-        .weather-detail {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-        }
-
-        /* Системная информация */
-        .system-info {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-          margin-top: 24px;
-        }
-
-        .system-stat {
-          background: rgba(255, 255, 255, 0.1);
-          border-radius: 12px;
-          padding: 12px;
-          backdrop-filter: blur(10px);
-        }
-
-        .system-stat-label {
+        .info-label {
           font-size: 11px;
           opacity: 0.8;
-          margin-bottom: 4px;
           text-transform: uppercase;
           letter-spacing: 0.5px;
+          margin-bottom: 6px;
         }
 
-        .system-stat-value {
-          font-size: 18px;
+        .info-value {
+          font-size: 24px;
           font-weight: 600;
         }
 
-        /* Иконка внизу */
-        .sidebar-footer {
+        /* Напоминание */
+        .reminder-box {
+          background: rgba(255, 255, 255, 0.12);
+          backdrop-filter: blur(10px);
+          border-radius: 16px;
+          padding: 14px 16px;
+          font-size: 13px;
           margin-top: auto;
-          padding-top: 24px;
-          text-align: center;
-          opacity: 0.6;
         }
 
-        .sidebar-footer svg {
-          width: 32px;
-          height: 32px;
-        }
-
-        /* ═══════════════════════════════════════
-           ОСНОВНАЯ ОБЛАСТЬ
-           ═══════════════════════════════════════ */
-        .main-content {
+        /* ОСНОВНАЯ ОБЛАСТЬ */
+        .main-area {
           flex: 1;
-          padding: 32px;
+          padding: 40px;
           overflow-y: auto;
-          max-height: 800px;
-          background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
         }
 
-        .content-header {
-          margin-bottom: 32px;
-        }
-
-        .content-title {
-          font-size: 32px;
+        /* Заголовок */
+        .page-header h2 {
+          font-size: 36px;
           font-weight: 700;
-          margin: 0;
           color: white;
-          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .content-subtitle {
-          font-size: 16px;
-          color: rgba(255, 255, 255, 0.9);
-          margin-top: 8px;
-        }
-
-        /* Сетка комнат */
-        .rooms-section {
           margin-bottom: 32px;
         }
 
-        .section-title {
-          font-size: 20px;
-          font-weight: 600;
-          color: white;
-          margin-bottom: 16px;
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .rooms-grid {
+        /* Сетка устройств */
+        .devices-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
           gap: 16px;
           margin-bottom: 32px;
         }
 
-        .room-card {
-          background: rgba(255, 255, 255, 0.2);
-          backdrop-filter: blur(10px);
-          border-radius: 16px;
+        /* Карточка устройства */
+        .device-card {
+          background: rgba(255, 255, 255, 0.95);
+          border-radius: 20px;
           padding: 20px;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          border: 1px solid rgba(255, 255, 255, 0.3);
           cursor: pointer;
+          transition: all 0.3s ease;
+          border: none;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
           position: relative;
-          overflow: hidden;
         }
 
-        .room-card::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
-          opacity: 0;
-          transition: opacity 0.3s;
+        .device-card:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
         }
 
-        .room-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-          border-color: rgba(255, 255, 255, 0.5);
+        .device-card.active {
+          background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+          color: white;
         }
 
-        .room-card:hover::before {
-          opacity: 1;
+        .device-card.active .device-name,
+        .device-card.active .device-status {
+          color: white;
         }
 
-        .room-header {
+        .device-header {
           display: flex;
           align-items: center;
           margin-bottom: 12px;
         }
 
-        .room-icon {
-          font-size: 28px;
-          margin-right: 12px;
+        .device-icon {
           width: 48px;
           height: 48px;
+          border-radius: 14px;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: rgba(255, 255, 255, 0.3);
-          border-radius: 12px;
-          backdrop-filter: blur(5px);
+          font-size: 24px;
+          margin-right: 12px;
+          background: rgba(139, 92, 246, 0.1);
         }
 
-        .room-info {
+        .device-card.active .device-icon {
+          background: rgba(255, 255, 255, 0.25);
+        }
+
+        .device-info {
           flex: 1;
         }
 
-        .room-name {
-          font-size: 16px;
+        .device-name {
+          font-size: 15px;
           font-weight: 600;
-          margin: 0;
-          color: white;
+          color: #1f2937;
+          margin-bottom: 4px;
         }
 
-        .room-devices-count {
+        .device-status {
           font-size: 12px;
-          color: rgba(255, 255, 255, 0.8);
-          margin-top: 2px;
+          color: #6b7280;
         }
 
-        .room-status {
-          display: flex;
-          gap: 8px;
-          margin-top: 12px;
-          flex-wrap: wrap;
-        }
-
-        .status-badge {
-          display: inline-flex;
-          align-items: center;
-          padding: 4px 10px;
-          background: rgba(255, 255, 255, 0.3);
-          border-radius: 8px;
-          font-size: 11px;
-          font-weight: 500;
-          color: white;
-          backdrop-filter: blur(5px);
-        }
-
-        .status-badge.on {
-          background: rgba(16, 185, 129, 0.5);
-        }
-
-        .status-badge.off {
-          background: rgba(107, 114, 128, 0.4);
-        }
-
-        .status-indicator {
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          margin-right: 4px;
-          animation: pulse 2s infinite;
-        }
-
-        .status-indicator.on {
-          background: #10b981;
-        }
-
-        .status-indicator.off {
-          background: #9ca3af;
-        }
-
-        @keyframes pulse {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.5;
-          }
-        }
-
-        /* Быстрые действия */
-        .quick-actions {
-          background: rgba(255, 255, 255, 0.2);
-          backdrop-filter: blur(10px);
-          border-radius: 20px;
-          padding: 24px;
-          border: 1px solid rgba(255, 255, 255, 0.3);
-          margin-top: 24px;
-        }
-
-        .quick-actions-title {
-          font-size: 18px;
+        /* Секция */
+        .section-title {
+          font-size: 20px;
           font-weight: 600;
-          margin: 0 0 16px 0;
           color: white;
+          margin-bottom: 16px;
+          margin-top: 32px;
         }
 
-        .actions-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-          gap: 12px;
-        }
-
-        .action-button {
-          background: rgba(255, 255, 255, 0.25);
-          border: none;
-          border-radius: 12px;
-          padding: 16px 12px;
-          color: white;
-          cursor: pointer;
-          transition: all 0.3s;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 8px;
-          font-size: 13px;
-          font-weight: 500;
-          backdrop-filter: blur(5px);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .action-button:hover {
-          background: rgba(255, 255, 255, 0.35);
-          transform: scale(1.05);
-          border-color: rgba(255, 255, 255, 0.4);
-        }
-
-        .action-button:active {
-          transform: scale(0.95);
-        }
-
-        .action-icon {
-          font-size: 24px;
-        }
-
-        /* ═══════════════════════════════════════
-           МОДАЛЬНОЕ ОКНО ДЛЯ УСТРОЙСТВ
-           ═══════════════════════════════════════ */
+        /* МОДАЛЬНОЕ ОКНО ДЛЯ УСТРОЙСТВ */
         .modal-overlay {
           position: fixed;
           top: 0;
@@ -438,7 +316,7 @@ class SmartHomeDashboardCard extends HTMLElement {
         }
 
         .modal-content {
-          background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(180deg, rgba(139, 92, 246, 0.9) 0%, rgba(124, 58, 237, 0.9) 100%);
           border-radius: 24px;
           padding: 32px;
           max-width: 600px;
@@ -491,13 +369,13 @@ class SmartHomeDashboardCard extends HTMLElement {
           transform: scale(1.1);
         }
 
-        .devices-grid {
+        .modal-devices-grid {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
           gap: 16px;
         }
 
-        .device-card {
+        .modal-device-card {
           background: rgba(255, 255, 255, 0.15);
           backdrop-filter: blur(10px);
           border-radius: 16px;
@@ -507,19 +385,19 @@ class SmartHomeDashboardCard extends HTMLElement {
           cursor: pointer;
         }
 
-        .device-card:hover {
+        .modal-device-card:hover {
           background: rgba(255, 255, 255, 0.25);
           transform: translateY(-2px);
           box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
-        .device-header {
+        .modal-device-header {
           display: flex;
           align-items: center;
           margin-bottom: 12px;
         }
 
-        .device-icon {
+        .modal-device-icon {
           font-size: 24px;
           margin-right: 12px;
           width: 40px;
@@ -531,31 +409,31 @@ class SmartHomeDashboardCard extends HTMLElement {
           border-radius: 10px;
         }
 
-        .device-info {
+        .modal-device-info {
           flex: 1;
         }
 
-        .device-name {
+        .modal-device-name {
           font-size: 16px;
           font-weight: 600;
           color: white;
           margin: 0;
         }
 
-        .device-type {
+        .modal-device-type {
           font-size: 12px;
           color: rgba(255, 255, 255, 0.7);
           margin-top: 2px;
         }
 
-        .device-status {
+        .modal-device-status {
           display: flex;
           align-items: center;
           justify-content: space-between;
           margin-top: 12px;
         }
 
-        .device-state {
+        .modal-device-state {
           font-size: 14px;
           font-weight: 500;
           padding: 6px 12px;
@@ -564,19 +442,19 @@ class SmartHomeDashboardCard extends HTMLElement {
           color: white;
         }
 
-        .device-state.on {
+        .modal-device-state.on {
           background: rgba(16, 185, 129, 0.6);
         }
 
-        .device-state.off {
+        .modal-device-state.off {
           background: rgba(107, 114, 128, 0.6);
         }
 
-        .device-state.unavailable {
+        .modal-device-state.unavailable {
           background: rgba(239, 68, 68, 0.6);
         }
 
-        .device-toggle {
+        .modal-device-toggle {
           background: rgba(255, 255, 255, 0.3);
           border: none;
           border-radius: 8px;
@@ -588,33 +466,22 @@ class SmartHomeDashboardCard extends HTMLElement {
           transition: all 0.3s;
         }
 
-        .device-toggle:hover {
+        .modal-device-toggle:hover {
           background: rgba(255, 255, 255, 0.4);
         }
 
         /* Адаптивность */
         @media (max-width: 1024px) {
-          .dashboard-wrapper {
+          .dashboard-container {
             flex-direction: column;
           }
 
-          .sidebar {
+          .left-panel {
             width: 100%;
-            padding: 24px;
           }
 
-          .clock-time {
-            font-size: 36px;
-          }
-
-          .sidebar-weather {
-            margin-bottom: 16px;
-          }
-
-          .system-info {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+          .time-display h1 {
+            font-size: 48px;
           }
 
           .modal-content {
@@ -622,22 +489,22 @@ class SmartHomeDashboardCard extends HTMLElement {
             padding: 24px;
           }
 
-          .devices-grid {
+          .modal-devices-grid {
             grid-template-columns: 1fr;
           }
         }
 
         @media (max-width: 768px) {
-          .main-content {
-            padding: 20px;
+          .main-area {
+            padding: 24px;
           }
 
-          .rooms-grid {
+          .devices-grid {
             grid-template-columns: 1fr;
           }
 
-          .content-title {
-            font-size: 24px;
+          .page-header h2 {
+            font-size: 28px;
           }
 
           .modal-content {
@@ -651,62 +518,58 @@ class SmartHomeDashboardCard extends HTMLElement {
       </style>
 
       <ha-card>
-        <div class="dashboard-wrapper">
-          <!-- ЛЕВАЯ БОКОВАЯ ПАНЕЛЬ -->
-          <div class="sidebar">
-            <!-- Часы -->
-            <div class="clock">
-              <div class="clock-time">${this.currentTime ? this.currentTime.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : '00:00'}</div>
-              <div class="clock-date">${this.currentTime ? this.currentTime.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' }) : ''}</div>
-              <div class="week-info">Неделя ${this.getWeekNumber()}</div>
+        <div class="dashboard-container">
+          <!-- ПРАВАЯ ПАНЕЛЬ (для RTL) -->
+          <div class="left-panel">
+            <!-- Время -->
+            <div class="time-display">
+              <h1 class="clock-time">${this.currentTime ? this.currentTime.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }) : '00:00'}</h1>
+              <div class="date-display clock-date">${this.currentTime ? this.formatDate() : ''}</div>
+              <div class="week-number">שבוע ${this.getWeekNumber()}</div>
             </div>
 
             <!-- Приветствие -->
-            <div class="greeting">
+            <div class="greeting-box">
               ${this.getGreeting()} 😊
             </div>
 
             <!-- Погода -->
-            ${this.renderSidebarWeather()}
+            ${this.renderWeather()}
 
             <!-- Системная информация -->
-            <div class="system-info">
-              <div class="system-stat">
-                <div class="system-stat-label">Активные</div>
-                <div class="system-stat-value">${this.getActiveDevices()} шт</div>
+            <div class="system-info-section">
+              <div class="info-card">
+                <div class="info-label">פעילים</div>
+                <div class="info-value">${this.getActiveDevices()}</div>
               </div>
-              <div class="system-stat">
-                <div class="system-stat-label">Комнаты</div>
-                <div class="system-stat-value">${rooms.length}</div>
+              <div class="info-card">
+                <div class="info-label">חדרים</div>
+                <div class="info-value">${rooms.length}</div>
               </div>
             </div>
 
-            <!-- Иконка Home Assistant -->
-            <div class="sidebar-footer">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M21.8 13h-2.8c0 0-0.2-0.9-0.5-1.4-0.3-0.5-0.7-1-1.2-1.4-0.5-0.4-1.1-0.7-1.8-0.9-0.7-0.2-1.4-0.3-2.1-0.3s-1.5 0.1-2.2 0.3c-0.7 0.2-1.3 0.5-1.8 0.9-0.5 0.4-0.9 0.9-1.2 1.4-0.3 0.5-0.5 1.1-0.6 1.8h-2.8l-0.8 1.5 2.8 0c0.1 0.7 0.3 1.3 0.6 1.8 0.3 0.5 0.7 1 1.2 1.4 0.5 0.4 1.1 0.7 1.8 0.9 0.7 0.2 1.4 0.3 2.2 0.3s1.5-0.1 2.1-0.3c0.7-0.2 1.3-0.5 1.8-0.9 0.5-0.4 0.9-0.9 1.2-1.4 0.3-0.5 0.5-1.1 0.5-1.8h2.8l0.8-1.5z"/>
-              </svg>
+            <!-- Напоминание -->
+            <div class="reminder-box">
+              כביסה בעוד 4 ימים ביום חמישי בשעה 17:00
             </div>
           </div>
 
           <!-- ОСНОВНАЯ ОБЛАСТЬ -->
-          <div class="main-content">
-            <!-- Заголовок -->
-            <div class="content-header">
-              <h1 class="content-title">${title}</h1>
-              <div class="content-subtitle">🏠 Управление вашим умным домом</div>
+          <div class="main-area">
+            <div class="page-header">
+              <h2>${title}</h2>
             </div>
 
-            <!-- Комнаты -->
-            <div class="rooms-section">
-              <h2 class="section-title">Комнаты</h2>
-              <div class="rooms-grid">
-                ${rooms.map(room => this.renderRoom(room)).join('')}
-              </div>
+            <!-- Устройства -->
+            <div class="devices-grid">
+              ${rooms.map(room => this.renderDeviceCard(room)).join('')}
             </div>
 
-            <!-- Быстрые действия -->
-            ${this.renderQuickActions()}
+            <!-- Секция מדיה -->
+            ${this.renderMediaSection()}
+
+            <!-- Секция אחר -->
+            ${this.renderOthersSection()}
           </div>
         </div>
 
@@ -720,7 +583,7 @@ class SmartHomeDashboardCard extends HTMLElement {
               </h2>
               <button class="modal-close" id="modalClose">×</button>
             </div>
-            <div class="devices-grid" id="devicesGrid">
+            <div class="modal-devices-grid" id="devicesGrid">
               <!-- Устройства будут добавлены динамически -->
             </div>
           </div>
@@ -729,6 +592,18 @@ class SmartHomeDashboardCard extends HTMLElement {
     `;
 
     this.attachEventListeners();
+  }
+
+  formatDate() {
+    const days = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+    const months = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 
+                    'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
+    
+    const day = days[this.currentTime.getDay()];
+    const date = this.currentTime.getDate();
+    const month = months[this.currentTime.getMonth()];
+    
+    return `${day}\n${date} ${month}`;
   }
 
   getWeekNumber() {
@@ -740,10 +615,10 @@ class SmartHomeDashboardCard extends HTMLElement {
 
   getGreeting() {
     const hour = (this.currentTime || new Date()).getHours();
-    if (hour < 6) return 'Доброй ночи';
-    if (hour < 12) return 'Доброе утро';
-    if (hour < 18) return 'Добрый день';
-    return 'Добрый вечер';
+    if (hour < 6) return 'לילה טוב';
+    if (hour < 12) return 'בוקר טוב';
+    if (hour < 18) return 'יום טוב';
+    return 'ערב טוב';
   }
 
   getActiveDevices() {
@@ -761,18 +636,30 @@ class SmartHomeDashboardCard extends HTMLElement {
     return count;
   }
 
-  renderSidebarWeather() {
+  renderWeather() {
     const weatherEntity = this.config.weather_entity;
     if (!weatherEntity || !this._hass.states[weatherEntity]) {
-      return '';
+      return `
+        <div class="weather-widget">
+          <div class="weather-main-info">
+            <div class="weather-icon-large">☁️</div>
+            <div class="weather-temp-display">
+              <h2>2°C</h2>
+              <div class="weather-condition">מעונן</div>
+            </div>
+          </div>
+          <div class="weather-details-grid">
+            <div class="weather-detail-item">💧 81%</div>
+            <div class="weather-detail-item">🌡️ 1013 hPa</div>
+          </div>
+        </div>
+      `;
     }
 
     const weather = this._hass.states[weatherEntity];
     const temp = Math.round(weather.attributes.temperature);
-    const description = weather.state;
     const humidity = weather.attributes.humidity;
     const pressure = weather.attributes.pressure;
-    const windSpeed = Math.round(weather.attributes.wind_speed);
     
     const weatherIcons = {
       'sunny': '☀️',
@@ -784,52 +671,34 @@ class SmartHomeDashboardCard extends HTMLElement {
       'partlycloudy': '⛅',
     };
     
-    const icon = weatherIcons[description] || '🌤️';
-    const descriptionRu = {
-      'sunny': 'Солнечно',
-      'clear-night': 'Ясная ночь',
-      'cloudy': 'Облачно',
-      'rainy': 'Дождь',
-      'snowy': 'Снег',
-      'fog': 'Туман',
-      'partlycloudy': 'Переменная облачность',
-    }[description] || description;
+    const icon = weatherIcons[weather.state] || '🌤️';
 
     return `
-      <div class="sidebar-weather">
-        <div class="weather-main">
-          <div class="weather-icon-big">${icon}</div>
-          <div>
-            <div class="weather-temp-big">${temp}°</div>
-            <div style="font-size: 13px; opacity: 0.9;">${descriptionRu}</div>
+      <div class="weather-widget">
+        <div class="weather-main-info">
+          <div class="weather-icon-large">${icon}</div>
+          <div class="weather-temp-display">
+            <h2>${temp}°C</h2>
+            <div class="weather-condition">מעונן</div>
           </div>
         </div>
-        <div class="weather-details">
-          <div class="weather-detail">💧 ${humidity}%</div>
-          <div class="weather-detail">🌡️ ${pressure} hPa</div>
-          <div class="weather-detail">💨 ${windSpeed} км/ч</div>
-          <div class="weather-detail">🧭 ${this.getWindDirection(weather.attributes.wind_bearing)}</div>
+        <div class="weather-details-grid">
+          <div class="weather-detail-item">💧 ${humidity}%</div>
+          <div class="weather-detail-item">🌡️ ${pressure} hPa</div>
         </div>
       </div>
     `;
   }
 
-  getWindDirection(bearing) {
-    if (!bearing) return '—';
-    const directions = ['С', 'СВ', 'В', 'ЮВ', 'Ю', 'ЮЗ', 'З', 'СЗ'];
-    const index = Math.round(bearing / 45) % 8;
-    return directions[index];
-  }
-
-  renderRoom(room) {
+  renderDeviceCard(room) {
     const entities = room.entities || [];
-    const onCount = entities.filter(e => {
+    const isActive = entities.some(e => {
       const state = this._hass.states[e];
       return state && state.state === 'on';
-    }).length;
+    });
 
     const roomIcons = {
-      'living_room': '🛋️',
+      'living_room': '💡',
       'bedroom': '🛏️',
       'kitchen': '🍳',
       'bathroom': '🚿',
@@ -841,72 +710,47 @@ class SmartHomeDashboardCard extends HTMLElement {
     };
 
     const icon = roomIcons[room.id] || '🏠';
+    const statusText = isActive ? 'פועל' : 'כבוי';
 
     return `
-      <div class="room-card" data-room-id="${room.id}">
-        <div class="room-header">
-          <div class="room-icon">${icon}</div>
-          <div class="room-info">
-            <h3 class="room-name">${room.name}</h3>
-            <div class="room-devices-count">${entities.length} устройств</div>
+      <div class="device-card ${isActive ? 'active' : ''}" data-room-id="${room.id}">
+        <div class="device-header">
+          <div class="device-icon">${icon}</div>
+          <div class="device-info">
+            <div class="device-name">${room.name}</div>
+            <div class="device-status">${statusText}</div>
           </div>
-        </div>
-        <div class="room-status">
-          <span class="status-badge ${onCount > 0 ? 'on' : 'off'}">
-            <span class="status-indicator ${onCount > 0 ? 'on' : 'off'}"></span>
-            ${onCount} вкл
-          </span>
-          <span class="status-badge ${onCount === 0 ? 'on' : 'off'}">
-            <span class="status-indicator ${onCount === 0 ? 'on' : 'off'}"></span>
-            ${entities.length - onCount} выкл
-          </span>
         </div>
       </div>
     `;
   }
 
-  renderQuickActions() {
-    const actions = this.config.quick_actions || [];
-    
-    if (actions.length === 0) {
-      return '';
-    }
-
+  renderMediaSection() {
     return `
-      <div class="quick-actions">
-        <h3 class="quick-actions-title">⚡ Быстрые действия</h3>
-        <div class="actions-grid">
-          ${actions.map(action => `
-            <button class="action-button" data-action="${action.service}" data-entity="${action.entity_id}">
-              <span class="action-icon">${action.icon || '💡'}</span>
-              <span>${action.name}</span>
-            </button>
-          `).join('')}
-        </div>
+      <div class="section-title">מדיה</div>
+      <div class="devices-grid">
+        <!-- Media карточки можно добавить здесь -->
+      </div>
+    `;
+  }
+
+  renderOthersSection() {
+    return `
+      <div class="section-title">אחר</div>
+      <div class="devices-grid">
+        <!-- Дополнительные карточки можно добавить здесь -->
       </div>
     `;
   }
 
   attachEventListeners() {
     // Room card clicks - открываем модальное окно
-    this.shadowRoot.querySelectorAll('.room-card').forEach(card => {
+    this.shadowRoot.querySelectorAll('.device-card').forEach(card => {
       card.addEventListener('click', (e) => {
         const roomId = e.currentTarget.dataset.roomId;
         const room = this.config.rooms.find(r => r.id === roomId);
         if (room && room.entities && room.entities.length > 0) {
           this.showDevicesModal(room);
-        }
-      });
-    });
-
-    // Quick action buttons
-    this.shadowRoot.querySelectorAll('.action-button').forEach(button => {
-      button.addEventListener('click', (e) => {
-        const service = e.currentTarget.dataset.action;
-        const entityId = e.currentTarget.dataset.entity;
-        if (service && entityId) {
-          const [domain, serviceAction] = service.split('.');
-          this._hass.callService(domain, serviceAction, { entity_id: entityId });
         }
       });
     });
@@ -974,7 +818,7 @@ class SmartHomeDashboardCard extends HTMLElement {
 
   createDeviceCard(entityId, state) {
     const card = document.createElement('div');
-    card.className = 'device-card';
+    card.className = 'modal-device-card';
     card.dataset.entityId = entityId;
 
     const domain = entityId.split('.')[0];
@@ -1002,23 +846,23 @@ class SmartHomeDashboardCard extends HTMLElement {
     const isUnavailable = deviceState === 'unavailable';
 
     card.innerHTML = `
-      <div class="device-header">
-        <div class="device-icon">${icon}</div>
-        <div class="device-info">
-          <h3 class="device-name">${friendlyName}</h3>
-          <div class="device-type">${domain}</div>
+      <div class="modal-device-header">
+        <div class="modal-device-icon">${icon}</div>
+        <div class="modal-device-info">
+          <h3 class="modal-device-name">${friendlyName}</h3>
+          <div class="modal-device-type">${domain}</div>
         </div>
       </div>
-      <div class="device-status">
-        <span class="device-state ${deviceState}">${this.getStateText(deviceState)}</span>
-        <button class="device-toggle" ${isUnavailable ? 'disabled' : ''}>
-          ${isOn ? 'Выключить' : 'Включить'}
+      <div class="modal-device-status">
+        <span class="modal-device-state ${deviceState}">${this.getStateText(deviceState)}</span>
+        <button class="modal-device-toggle" ${isUnavailable ? 'disabled' : ''}>
+          ${isOn ? 'כבה' : 'הדלק'}
         </button>
       </div>
     `;
 
     // Добавляем обработчик клика
-    const toggleBtn = card.querySelector('.device-toggle');
+    const toggleBtn = card.querySelector('.modal-device-toggle');
     if (!isUnavailable) {
       toggleBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1031,16 +875,16 @@ class SmartHomeDashboardCard extends HTMLElement {
 
   getStateText(state) {
     const stateTexts = {
-      'on': 'Включено',
-      'off': 'Выключено',
-      'unavailable': 'Недоступно',
-      'open': 'Открыто',
-      'closed': 'Закрыто',
-      'playing': 'Воспроизводится',
-      'paused': 'Приостановлено',
-      'idle': 'Ожидание',
-      'home': 'Дома',
-      'not_home': 'Не дома',
+      'on': 'פועל',
+      'off': 'כבוי',
+      'unavailable': 'לא זמין',
+      'open': 'פתוח',
+      'closed': 'סגור',
+      'playing': 'מנגן',
+      'paused': 'מושהה',
+      'idle': 'ממתין',
+      'home': 'בבית',
+      'not_home': 'לא בבית',
     };
     return stateTexts[state] || state;
   }
@@ -1066,13 +910,13 @@ class SmartHomeDashboardCard extends HTMLElement {
         const isOn = deviceState === 'on';
         const isUnavailable = deviceState === 'unavailable';
 
-        const stateElement = card.querySelector('.device-state');
-        const toggleBtn = card.querySelector('.device-toggle');
+        const stateElement = card.querySelector('.modal-device-state');
+        const toggleBtn = card.querySelector('.modal-device-toggle');
 
         stateElement.textContent = this.getStateText(deviceState);
-        stateElement.className = `device-state ${deviceState}`;
+        stateElement.className = `modal-device-state ${deviceState}`;
         
-        toggleBtn.textContent = isOn ? 'Выключить' : 'Включить';
+        toggleBtn.textContent = isOn ? 'כבה' : 'הדלק';
         toggleBtn.disabled = isUnavailable;
       }
     }
@@ -1085,16 +929,15 @@ class SmartHomeDashboardCard extends HTMLElement {
 
   static getStubConfig() {
     return {
-      title: 'Умный Дом',
+      title: 'הבית החכם',
       weather_entity: 'weather.forecast_home',
       rooms: [
         {
           id: 'living_room',
-          name: 'Гостиная',
+          name: 'סלון',
           entities: []
         }
-      ],
-      quick_actions: []
+      ]
     };
   }
 }
@@ -1105,7 +948,6 @@ window.customCards = window.customCards || [];
 window.customCards.push({
   type: 'smart-home-dashboard-card',
   name: 'Smart Home Dashboard',
-  description: 'Современный цветной дашборд для управления умным домом с боковой панелью',
+  description: 'Современный дашборд для умного дома в стиле Home Assistant',
   preview: true,
-  documentationURL: 'https://github.com/your-repo/smart-home-dashboard-card',
 });

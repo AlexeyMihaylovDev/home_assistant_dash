@@ -1,0 +1,200 @@
+# Продвинутая конфигурация Smart Home Dashboard Card
+# Этот пример показывает все возможности карточки
+
+type: custom:smart-home-dashboard-card
+
+# Заголовок дашборда
+title: Умный Дом - Полная Версия
+
+# Интеграция погоды (опционально)
+# Замените на вашу сущность погоды
+weather_entity: weather.home
+
+# Полная конфигурация комнат
+rooms:
+  # Гостиная
+  - id: living_room
+    name: Гостиная
+    entities:
+      - light.living_room_main
+      - light.living_room_ceiling
+      - light.living_room_lamp_1
+      - light.living_room_lamp_2
+      - light.living_room_led_strip
+      - switch.living_room_tv
+      - media_player.living_room_tv
+      - media_player.living_room_speaker
+      - switch.living_room_fan
+      - climate.living_room
+  
+  # Спальня
+  - id: bedroom
+    name: Спальня
+    entities:
+      - light.bedroom_main
+      - light.bedroom_ceiling
+      - light.bedroom_night_stand_left
+      - light.bedroom_night_stand_right
+      - light.bedroom_led_strip
+      - switch.bedroom_fan
+      - switch.bedroom_heater
+      - climate.bedroom
+      - cover.bedroom_blinds
+  
+  # Детская комната
+  - id: kids_room
+    name: Детская
+    entities:
+      - light.kids_room_main
+      - light.kids_room_night_light
+      - switch.kids_room_humidifier
+      - climate.kids_room
+  
+  # Кухня
+  - id: kitchen
+    name: Кухня
+    entities:
+      - light.kitchen_main
+      - light.kitchen_ceiling
+      - light.kitchen_counter
+      - light.kitchen_cabinet
+      - switch.kitchen_coffee_maker
+      - switch.kitchen_kettle
+      - switch.kitchen_dishwasher
+      - switch.kitchen_exhaust_fan
+  
+  # Ванная
+  - id: bathroom
+    name: Ванная
+    entities:
+      - light.bathroom_main
+      - light.bathroom_ceiling
+      - light.bathroom_mirror
+      - switch.bathroom_heater
+      - switch.bathroom_towel_warmer
+      - switch.bathroom_exhaust_fan
+      - climate.bathroom
+  
+  # Кабинет
+  - id: office
+    name: Кабинет
+    entities:
+      - light.office_main
+      - light.office_desk
+      - light.office_bookshelf
+      - switch.office_pc
+      - switch.office_monitor
+      - switch.office_printer
+      - climate.office
+  
+  # Прихожая
+  - id: hallway
+    name: Прихожая
+    entities:
+      - light.hallway_main
+      - light.hallway_entrance
+      - light.hallway_closet
+      - switch.hallway_heater
+  
+  # Гараж
+  - id: garage
+    name: Гараж
+    entities:
+      - light.garage_main
+      - light.garage_workbench
+      - cover.garage_door
+      - switch.garage_heater
+      - binary_sensor.garage_door_sensor
+  
+  # Сад/Терраса
+  - id: garden
+    name: Сад
+    entities:
+      - light.garden_path_lights
+      - light.garden_decorative_lights
+      - light.terrace_lights
+      - switch.garden_irrigation
+      - switch.garden_fountain
+      - switch.terrace_heater
+
+# Быстрые действия - максимальный набор
+quick_actions:
+  # Освещение
+  - name: Все включить
+    icon: 💡
+    service: light.turn_on
+    entity_id: all
+  
+  - name: Все выключить
+    icon: 🌙
+    service: light.turn_off
+    entity_id: all
+  
+  # Сцены по времени суток
+  - name: Доброе утро
+    icon: 🌅
+    service: scene.turn_on
+    entity_id: scene.good_morning
+  
+  - name: Рабочий день
+    icon: 💼
+    service: scene.turn_on
+    entity_id: scene.work_mode
+  
+  - name: Вечер
+    icon: 🌆
+    service: scene.turn_on
+    entity_id: scene.evening
+  
+  - name: Спокойной ночи
+    icon: 😴
+    service: scene.turn_on
+    entity_id: scene.good_night
+  
+  # Специальные режимы
+  - name: Режим кино
+    icon: 🎬
+    service: scene.turn_on
+    entity_id: scene.movie_mode
+  
+  - name: Вечеринка
+    icon: 🎉
+    service: scene.turn_on
+    entity_id: scene.party_mode
+  
+  - name: Романтика
+    icon: ❤️
+    service: scene.turn_on
+    entity_id: scene.romantic_mode
+  
+  - name: Чтение
+    icon: 📚
+    service: scene.turn_on
+    entity_id: scene.reading_mode
+  
+  # Системные действия
+  - name: Уборка
+    icon: 🧹
+    service: vacuum.start
+    entity_id: vacuum.roomba
+  
+  - name: Охрана
+    icon: 🔒
+    service: alarm_control_panel.alarm_arm_away
+    entity_id: alarm_control_panel.home
+  
+  - name: Дома
+    icon: 🏠
+    service: alarm_control_panel.alarm_disarm
+    entity_id: alarm_control_panel.home
+  
+  - name: Климат авто
+    icon: ❄️
+    service: climate.set_preset_mode
+    entity_id: climate.all
+  
+  - name: Полив
+    icon: 💧
+    service: switch.turn_on
+    entity_id: switch.garden_irrigation
+

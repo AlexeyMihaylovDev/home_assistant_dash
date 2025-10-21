@@ -1,0 +1,20 @@
+# Минимальная конфигурация Smart Home Dashboard Card
+# Идеально для начала
+
+type: custom:smart-home-dashboard-card
+title: Мой Дом
+
+rooms:
+  - id: living_room
+    name: Гостиная
+    entities:
+      - light.living_room
+  
+  - id: bedroom
+    name: Спальня
+    entities:
+      - light.bedroom
+
+# Быстрые действия не обязательны
+# Можно не указывать, если не нужны
+

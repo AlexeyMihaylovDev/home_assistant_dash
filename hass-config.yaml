@@ -1,0 +1,86 @@
+# Пример конфигурации для Home Assistant Dashboard
+
+# Сначала добавьте карточку в Lovelace resources
+# Перейдите в: Настройки -> Панели управления -> Ресурсы (три точки в верхнем правом углу)
+# Добавьте:
+# URL: /local/smart-home-dashboard-card.js
+# Тип ресурса: JavaScript Module
+
+# Затем добавьте карточку на вашу панель:
+
+type: custom:smart-home-dashboard-card
+title: Мой Умный Дом
+
+# Опционально: добавьте сущность погоды
+weather_entity: weather.home
+
+# Настройте комнаты
+rooms:
+  - id: living_room
+    name: Гостиная
+    entities:
+      - light.living_room_main
+      - light.living_room_lamp
+      - switch.tv
+      - media_player.living_room
+  
+  - id: bedroom
+    name: Спальня
+    entities:
+      - light.bedroom_main
+      - light.bedroom_night
+      - switch.bedroom_fan
+  
+  - id: kitchen
+    name: Кухня
+    entities:
+      - light.kitchen_main
+      - light.kitchen_counter
+      - switch.coffee_maker
+  
+  - id: bathroom
+    name: Ванная
+    entities:
+      - light.bathroom_main
+      - light.bathroom_mirror
+      - switch.bathroom_heater
+  
+  - id: office
+    name: Кабинет
+    entities:
+      - light.office_desk
+      - light.office_main
+      - switch.office_pc
+
+# Быстрые действия
+quick_actions:
+  - name: Все включить
+    icon: 💡
+    service: light.turn_on
+    entity_id: all
+  
+  - name: Все выключить
+    icon: 🌙
+    service: light.turn_off
+    entity_id: all
+  
+  - name: Режим кино
+    icon: 🎬
+    service: scene.turn_on
+    entity_id: scene.movie_mode
+  
+  - name: Доброе утро
+    icon: 🌅
+    service: scene.turn_on
+    entity_id: scene.good_morning
+  
+  - name: Спокойной ночи
+    icon: 😴
+    service: scene.turn_on
+    entity_id: scene.good_night
+  
+  - name: Уборка
+    icon: 🧹
+    service: vacuum.start
+    entity_id: vacuum.roomba
+

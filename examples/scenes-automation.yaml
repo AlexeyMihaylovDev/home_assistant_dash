@@ -1,0 +1,397 @@
+# Примеры сцен и автоматизаций для Smart Home Dashboard
+# Добавьте эти сцены в ваш configuration.yaml или scenes.yaml
+
+# ============================================================
+# СЦЕНЫ
+# ============================================================
+
+scene:
+  # Доброе утро - постепенное включение света
+  - name: Доброе утро
+    id: good_morning
+    entities:
+      # Спальня - мягкий свет
+      light.bedroom_main:
+        state: on
+        brightness: 50
+        color_temp: 370
+      
+      # Кухня - яркий свет
+      light.kitchen_main:
+        state: on
+        brightness: 100
+        color_temp: 250
+      
+      # Ванная
+      light.bathroom_main:
+        state: on
+        brightness: 80
+        color_temp: 300
+      
+      # Прихожая
+      light.hallway_main:
+        state: on
+        brightness: 60
+      
+      # Кофеварка
+      switch.coffee_maker:
+        state: on
+
+  # Режим работы
+  - name: Рабочий режим
+    id: work_mode
+    entities:
+      # Кабинет - яркое освещение
+      light.office_main:
+        state: on
+        brightness: 100
+        color_temp: 250
+      
+      light.office_desk:
+        state: on
+        brightness: 100
+        color_temp: 250
+      
+      # Остальные комнаты выключены
+      light.living_room_main:
+        state: off
+      
+      light.bedroom_main:
+        state: off
+
+  # Вечерний режим
+  - name: Вечер
+    id: evening
+    entities:
+      # Гостиная - теплый свет
+      light.living_room_main:
+        state: on
+        brightness: 70
+        color_temp: 450
+      
+      light.living_room_lamp:
+        state: on
+        brightness: 60
+        color_temp: 450
+      
+      # Кухня - средний свет
+      light.kitchen_main:
+        state: on
+        brightness: 60
+        color_temp: 400
+      
+      # Спальня - ночники
+      light.bedroom_night:
+        state: on
+        brightness: 20
+        color_temp: 500
+
+  # Режим кино
+  - name: Режим кино
+    id: movie_mode
+    entities:
+      # Основной свет выключен
+      light.living_room_main:
+        state: off
+      
+      # LED подсветка
+      light.living_room_led_strip:
+        state: on
+        brightness: 30
+        rgb_color: [100, 0, 100]
+      
+      # ТВ
+      switch.living_room_tv:
+        state: on
+      
+      # Жалюзи закрыты
+      cover.living_room_blinds:
+        state: closed
+
+  # Спокойной ночи
+  - name: Спокойной ночи
+    id: good_night
+    entities:
+      # Все основные источники света выключены
+      light.living_room_main:
+        state: off
+      
+      light.kitchen_main:
+        state: off
+      
+      light.bathroom_main:
+        state: off
+      
+      light.office_main:
+        state: off
+      
+      # Спальня - очень тусклый ночник
+      light.bedroom_night:
+        state: on
+        brightness: 5
+        color_temp: 500
+      
+      # Прихожая - тусклый свет
+      light.hallway_main:
+        state: on
+        brightness: 10
+      
+      # Все переключатели выключены
+      switch.tv:
+        state: off
+      
+      switch.coffee_maker:
+        state: off
+
+  # Вечеринка
+  - name: Вечеринка
+    id: party_mode
+    entities:
+      light.living_room_main:
+        state: on
+        brightness: 100
+        rgb_color: [255, 0, 255]
+        effect: colorloop
+      
+      light.living_room_led_strip:
+        state: on
+        brightness: 100
+        effect: colorloop
+      
+      media_player.living_room_speaker:
+        state: playing
+
+  # Романтический режим
+  - name: Романтика
+    id: romantic_mode
+    entities:
+      light.living_room_main:
+        state: off
+      
+      light.living_room_lamp:
+        state: on
+        brightness: 20
+        rgb_color: [255, 50, 50]
+      
+      light.living_room_led_strip:
+        state: on
+        brightness: 30
+        rgb_color: [255, 30, 30]
+
+  # Режим чтения
+  - name: Чтение
+    id: reading_mode
+    entities:
+      light.living_room_main:
+        state: on
+        brightness: 80
+        color_temp: 350
+      
+      light.living_room_lamp:
+        state: on
+        brightness: 100
+        color_temp: 300
+
+# ============================================================
+# АВТОМАТИЗАЦИИ
+# ============================================================
+
+automation:
+  # Автоматическое доброе утро в будни
+  - id: auto_good_morning_weekday
+    alias: Автоматическое доброе утро (будни)
+    trigger:
+      - platform: time
+        at: "07:00:00"
+    condition:
+      - condition: time
+        weekday:
+          - mon
+          - tue
+          - wed
+          - thu
+          - fri
+    action:
+      - service: scene.turn_on
+        target:
+          entity_id: scene.good_morning
+
+  # Автоматический вечерний режим
+  - id: auto_evening_mode
+    alias: Автоматический вечер
+    trigger:
+      - platform: sun
+        event: sunset
+        offset: "-00:30:00"
+    action:
+      - service: scene.turn_on
+        target:
+          entity_id: scene.evening
+
+  # Автоматическая спокойная ночь
+  - id: auto_good_night
+    alias: Автоматическая спокойная ночь
+    trigger:
+      - platform: time
+        at: "23:00:00"
+    action:
+      - service: scene.turn_on
+        target:
+          entity_id: scene.good_night
+
+  # Выключить всё при уходе из дома
+  - id: away_mode
+    alias: Режим Отсутствия
+    trigger:
+      - platform: state
+        entity_id: person.owner
+        to: "not_home"
+        for:
+          minutes: 5
+    action:
+      # Выключить все источники света
+      - service: light.turn_off
+        target:
+          entity_id: all
+      
+      # Выключить все переключатели (кроме критичных)
+      - service: switch.turn_off
+        target:
+          entity_id:
+            - switch.tv
+            - switch.coffee_maker
+      
+      # Включить охрану
+      - service: alarm_control_panel.alarm_arm_away
+        target:
+          entity_id: alarm_control_panel.home
+
+  # Режим "Я дома"
+  - id: home_mode
+    alias: Режим Дома
+    trigger:
+      - platform: state
+        entity_id: person.owner
+        to: "home"
+    action:
+      # Выключить охрану
+      - service: alarm_control_panel.alarm_disarm
+        target:
+          entity_id: alarm_control_panel.home
+      
+      # Включить прихожую
+      - service: light.turn_on
+        target:
+          entity_id: light.hallway_main
+        data:
+          brightness: 80
+
+  # Умное освещение по движению (прихожая)
+  - id: hallway_motion_light
+    alias: Свет в прихожей по движению
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.hallway_motion
+        to: "on"
+    condition:
+      - condition: numeric_state
+        entity_id: sensor.hallway_illuminance
+        below: 50
+    action:
+      - service: light.turn_on
+        target:
+          entity_id: light.hallway_main
+        data:
+          brightness: 60
+      - delay:
+          minutes: 2
+      - service: light.turn_off
+        target:
+          entity_id: light.hallway_main
+
+  # Автоматическое включение вентилятора при высокой температуре
+  - id: auto_fan_on_temperature
+    alias: Вентилятор при жаре
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.living_room_temperature
+        above: 26
+    action:
+      - service: switch.turn_on
+        target:
+          entity_id: switch.living_room_fan
+
+  # Автоматическое выключение вентилятора
+  - id: auto_fan_off_temperature
+    alias: Выключить вентилятор
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.living_room_temperature
+        below: 24
+    action:
+      - service: switch.turn_off
+        target:
+          entity_id: switch.living_room_fan
+
+# ============================================================
+# СКРИПТЫ
+# ============================================================
+
+script:
+  # Постепенное затухание света
+  fade_lights:
+    alias: Плавное затухание
+    sequence:
+      - repeat:
+          count: 10
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: "{{ lights }}"
+              data:
+                brightness: "{{ [0, (state_attr(lights, 'brightness') | int - 25)] | max }}"
+            - delay:
+                seconds: 1
+      - service: light.turn_off
+        target:
+          entity_id: "{{ lights }}"
+
+  # Мигание света (уведомление)
+  flash_lights:
+    alias: Мигание света
+    sequence:
+      - repeat:
+          count: 3
+          sequence:
+            - service: light.turn_off
+              target:
+                entity_id: "{{ lights }}"
+            - delay:
+                milliseconds: 500
+            - service: light.turn_on
+              target:
+                entity_id: "{{ lights }}"
+            - delay:
+                milliseconds: 500
+
+  # Цветовой будильник
+  color_wake_up:
+    alias: Цветовой будильник
+    sequence:
+      - service: light.turn_on
+        target:
+          entity_id: light.bedroom_main
+        data:
+          brightness: 1
+          rgb_color: [255, 100, 0]
+      - repeat:
+          count: 30
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.bedroom_main
+              data:
+                brightness: "{{ [255, (state_attr('light.bedroom_main', 'brightness') | int + 8)] | min }}"
+            - delay:
+                seconds: 60
+

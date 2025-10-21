@@ -1,0 +1,88 @@
+═══════════════════════════════════════════════════════════════
+  БЫСТРЫЕ КОМАНДЫ ДЛЯ ЗАГРУЗКИ В GITHUB
+═══════════════════════════════════════════════════════════════
+
+ВАЖНО: Сначала создайте репозиторий на GitHub:
+→ https://github.com/new
+
+Название: smart-home-dashboard-card
+Описание: Красивый современный дашборд для Home Assistant
+Public ✓
+
+═══════════════════════════════════════════════════════════════
+  ШАГ 1: СКОПИРУЙТЕ ЭТИ КОМАНДЫ В POWERSHELL
+═══════════════════════════════════════════════════════════════
+
+# Перейти в папку проекта
+cd E:\home_assistant_dash
+
+# Инициализировать Git
+git init
+
+# Добавить все файлы
+git add .
+
+# Первый коммит
+git commit -m "Initial commit: Smart Home Dashboard Card v1.0.0"
+
+# Переименовать ветку
+git branch -M main
+
+# Добавить remote (ЗАМЕНИТЕ YOUR_USERNAME!)
+git remote add origin https://github.com/YOUR_USERNAME/smart-home-dashboard-card.git
+
+# Загрузить на GitHub
+git push -u origin main
+
+═══════════════════════════════════════════════════════════════
+  ГОТОВО! Проверьте: https://github.com/YOUR_USERNAME/smart-home-dashboard-card
+═══════════════════════════════════════════════════════════════
+
+
+═══════════════════════════════════════════════════════════════
+  ОБНОВЛЕНИЕ В БУДУЩЕМ
+═══════════════════════════════════════════════════════════════
+
+cd E:\home_assistant_dash
+git add .
+git commit -m "Описание изменений"
+git push
+
+
+═══════════════════════════════════════════════════════════════
+  ЗАМЕНА YOUR_USERNAME ВО ВСЕХ ФАЙЛАХ
+═══════════════════════════════════════════════════════════════
+
+# Замените ВАШ_USERNAME на реальное имя!
+$username = "ВАШ_USERNAME"
+$files = @("README.md", "INSTALLATION_FROM_GITHUB.md", "GITHUB_SETUP.md", "info.md")
+foreach ($file in $files) {
+    (Get-Content $file) -replace 'YOUR_USERNAME', $username | Set-Content $file
+}
+
+git add .
+git commit -m "Update GitHub username in docs"
+git push
+
+
+═══════════════════════════════════════════════════════════════
+  ПОСЛЕ ЗАГРУЗКИ: СОЗДАЙТЕ RELEASE
+═══════════════════════════════════════════════════════════════
+
+1. На GitHub → Releases → Create a new release
+2. Tag: v1.0.0
+3. Title: Version 1.0.0 - Первый релиз
+4. Publish release
+
+
+═══════════════════════════════════════════════════════════════
+  ТЕПЕРЬ МОЖНО УСТАНАВЛИВАТЬ ИЗ GITHUB!
+═══════════════════════════════════════════════════════════════
+
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/YOUR_USERNAME/smart-home-dashboard-card/main/smart-home-dashboard-card.js" -OutFile "smart-home-dashboard-card.js"
+
+
+═══════════════════════════════════════════════════════════════
+Подробная инструкция: PUBLISH_TO_GITHUB_STEPS.md
+═══════════════════════════════════════════════════════════════
+

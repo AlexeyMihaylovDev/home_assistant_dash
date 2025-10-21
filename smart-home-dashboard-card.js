@@ -194,6 +194,7 @@ class SmartHomeDashboardCard extends HTMLElement {
           padding: 32px;
           overflow-y: auto;
           max-height: 800px;
+          background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
         }
 
         .content-header {
@@ -235,7 +236,7 @@ class SmartHomeDashboardCard extends HTMLElement {
         }
 
         .room-card {
-          background: rgba(255, 255, 255, 0.25);
+          background: rgba(255, 255, 255, 0.2);
           backdrop-filter: blur(10px);
           border-radius: 16px;
           padding: 20px;
@@ -411,6 +412,186 @@ class SmartHomeDashboardCard extends HTMLElement {
           font-size: 24px;
         }
 
+        /* ═══════════════════════════════════════
+           МОДАЛЬНОЕ ОКНО ДЛЯ УСТРОЙСТВ
+           ═══════════════════════════════════════ */
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.7);
+          backdrop-filter: blur(5px);
+          z-index: 1000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          visibility: hidden;
+          transition: all 0.3s ease;
+        }
+
+        .modal-overlay.show {
+          opacity: 1;
+          visibility: visible;
+        }
+
+        .modal-content {
+          background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+          border-radius: 24px;
+          padding: 32px;
+          max-width: 600px;
+          width: 90%;
+          max-height: 80vh;
+          overflow-y: auto;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+          transform: scale(0.8);
+          transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-content {
+          transform: scale(1);
+        }
+
+        .modal-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 24px;
+        }
+
+        .modal-title {
+          font-size: 24px;
+          font-weight: 700;
+          color: white;
+          margin: 0;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .modal-close {
+          background: rgba(255, 255, 255, 0.2);
+          border: none;
+          border-radius: 50%;
+          width: 40px;
+          height: 40px;
+          color: white;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 20px;
+          transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+          background: rgba(255, 255, 255, 0.3);
+          transform: scale(1.1);
+        }
+
+        .devices-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 16px;
+        }
+
+        .device-card {
+          background: rgba(255, 255, 255, 0.15);
+          backdrop-filter: blur(10px);
+          border-radius: 16px;
+          padding: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          transition: all 0.3s ease;
+          cursor: pointer;
+        }
+
+        .device-card:hover {
+          background: rgba(255, 255, 255, 0.25);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .device-header {
+          display: flex;
+          align-items: center;
+          margin-bottom: 12px;
+        }
+
+        .device-icon {
+          font-size: 24px;
+          margin-right: 12px;
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 10px;
+        }
+
+        .device-info {
+          flex: 1;
+        }
+
+        .device-name {
+          font-size: 16px;
+          font-weight: 600;
+          color: white;
+          margin: 0;
+        }
+
+        .device-type {
+          font-size: 12px;
+          color: rgba(255, 255, 255, 0.7);
+          margin-top: 2px;
+        }
+
+        .device-status {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-top: 12px;
+        }
+
+        .device-state {
+          font-size: 14px;
+          font-weight: 500;
+          padding: 6px 12px;
+          border-radius: 20px;
+          background: rgba(255, 255, 255, 0.2);
+          color: white;
+        }
+
+        .device-state.on {
+          background: rgba(16, 185, 129, 0.6);
+        }
+
+        .device-state.off {
+          background: rgba(107, 114, 128, 0.6);
+        }
+
+        .device-state.unavailable {
+          background: rgba(239, 68, 68, 0.6);
+        }
+
+        .device-toggle {
+          background: rgba(255, 255, 255, 0.3);
+          border: none;
+          border-radius: 8px;
+          padding: 8px 16px;
+          color: white;
+          cursor: pointer;
+          font-size: 12px;
+          font-weight: 500;
+          transition: all 0.3s;
+        }
+
+        .device-toggle:hover {
+          background: rgba(255, 255, 255, 0.4);
+        }
+
         /* Адаптивность */
         @media (max-width: 1024px) {
           .dashboard-wrapper {
@@ -435,6 +616,15 @@ class SmartHomeDashboardCard extends HTMLElement {
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
           }
+
+          .modal-content {
+            width: 95%;
+            padding: 24px;
+          }
+
+          .devices-grid {
+            grid-template-columns: 1fr;
+          }
         }
 
         @media (max-width: 768px) {
@@ -448,6 +638,14 @@ class SmartHomeDashboardCard extends HTMLElement {
 
           .content-title {
             font-size: 24px;
+          }
+
+          .modal-content {
+            padding: 20px;
+          }
+
+          .modal-title {
+            font-size: 20px;
           }
         }
       </style>
@@ -509,6 +707,22 @@ class SmartHomeDashboardCard extends HTMLElement {
 
             <!-- Быстрые действия -->
             ${this.renderQuickActions()}
+          </div>
+        </div>
+
+        <!-- МОДАЛЬНОЕ ОКНО ДЛЯ УСТРОЙСТВ -->
+        <div class="modal-overlay" id="devicesModal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2 class="modal-title" id="modalTitle">
+                <span id="modalIcon">🏠</span>
+                <span id="modalRoomName">Комната</span>
+              </h2>
+              <button class="modal-close" id="modalClose">×</button>
+            </div>
+            <div class="devices-grid" id="devicesGrid">
+              <!-- Устройства будут добавлены динамически -->
+            </div>
           </div>
         </div>
       </ha-card>
@@ -674,20 +888,13 @@ class SmartHomeDashboardCard extends HTMLElement {
   }
 
   attachEventListeners() {
-    // Room card clicks
+    // Room card clicks - открываем модальное окно
     this.shadowRoot.querySelectorAll('.room-card').forEach(card => {
       card.addEventListener('click', (e) => {
         const roomId = e.currentTarget.dataset.roomId;
         const room = this.config.rooms.find(r => r.id === roomId);
         if (room && room.entities && room.entities.length > 0) {
-          room.entities.forEach(entityId => {
-            const state = this._hass.states[entityId];
-            if (state) {
-              const domain = entityId.split('.')[0];
-              const service = state.state === 'on' ? 'turn_off' : 'turn_on';
-              this._hass.callService(domain, service, { entity_id: entityId });
-            }
-          });
+          this.showDevicesModal(room);
         }
       });
     });
@@ -703,6 +910,177 @@ class SmartHomeDashboardCard extends HTMLElement {
         }
       });
     });
+
+    // Модальное окно
+    const modal = this.shadowRoot.getElementById('devicesModal');
+    const closeBtn = this.shadowRoot.getElementById('modalClose');
+    
+    // Закрытие по кнопке
+    closeBtn.addEventListener('click', () => {
+      this.closeDevicesModal();
+    });
+
+    // Закрытие по клику на фон
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        this.closeDevicesModal();
+      }
+    });
+
+    // Закрытие по Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('show')) {
+        this.closeDevicesModal();
+      }
+    });
+  }
+
+  showDevicesModal(room) {
+    const modal = this.shadowRoot.getElementById('devicesModal');
+    const modalIcon = this.shadowRoot.getElementById('modalIcon');
+    const modalRoomName = this.shadowRoot.getElementById('modalRoomName');
+    const devicesGrid = this.shadowRoot.getElementById('devicesGrid');
+
+    // Устанавливаем заголовок
+    const roomIcons = {
+      'living_room': '🛋️',
+      'bedroom': '🛏️',
+      'kitchen': '🍳',
+      'bathroom': '🚿',
+      'office': '💼',
+      'garage': '🚗',
+      'garden': '🌿',
+      'hallway': '🚪',
+      'kids_room': '🧸',
+    };
+
+    modalIcon.textContent = roomIcons[room.id] || '🏠';
+    modalRoomName.textContent = room.name;
+
+    // Очищаем и заполняем устройства
+    devicesGrid.innerHTML = '';
+    
+    room.entities.forEach(entityId => {
+      const state = this._hass.states[entityId];
+      if (state) {
+        const deviceCard = this.createDeviceCard(entityId, state);
+        devicesGrid.appendChild(deviceCard);
+      }
+    });
+
+    // Показываем модальное окно
+    modal.classList.add('show');
+  }
+
+  createDeviceCard(entityId, state) {
+    const card = document.createElement('div');
+    card.className = 'device-card';
+    card.dataset.entityId = entityId;
+
+    const domain = entityId.split('.')[0];
+    const deviceIcons = {
+      'light': '💡',
+      'switch': '🔌',
+      'cover': '🪟',
+      'climate': '🌡️',
+      'media_player': '📺',
+      'fan': '🌀',
+      'lock': '🔒',
+      'camera': '📷',
+      'sensor': '📊',
+      'binary_sensor': '📡',
+      'vacuum': '🤖',
+      'scene': '🎬',
+      'script': '📜',
+      'automation': '⚙️',
+    };
+
+    const icon = deviceIcons[domain] || '🔧';
+    const friendlyName = state.attributes.friendly_name || entityId;
+    const deviceState = state.state;
+    const isOn = deviceState === 'on';
+    const isUnavailable = deviceState === 'unavailable';
+
+    card.innerHTML = `
+      <div class="device-header">
+        <div class="device-icon">${icon}</div>
+        <div class="device-info">
+          <h3 class="device-name">${friendlyName}</h3>
+          <div class="device-type">${domain}</div>
+        </div>
+      </div>
+      <div class="device-status">
+        <span class="device-state ${deviceState}">${this.getStateText(deviceState)}</span>
+        <button class="device-toggle" ${isUnavailable ? 'disabled' : ''}>
+          ${isOn ? 'Выключить' : 'Включить'}
+        </button>
+      </div>
+    `;
+
+    // Добавляем обработчик клика
+    const toggleBtn = card.querySelector('.device-toggle');
+    if (!isUnavailable) {
+      toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.toggleDevice(entityId, state);
+      });
+    }
+
+    return card;
+  }
+
+  getStateText(state) {
+    const stateTexts = {
+      'on': 'Включено',
+      'off': 'Выключено',
+      'unavailable': 'Недоступно',
+      'open': 'Открыто',
+      'closed': 'Закрыто',
+      'playing': 'Воспроизводится',
+      'paused': 'Приостановлено',
+      'idle': 'Ожидание',
+      'home': 'Дома',
+      'not_home': 'Не дома',
+    };
+    return stateTexts[state] || state;
+  }
+
+  toggleDevice(entityId, state) {
+    const domain = entityId.split('.')[0];
+    const service = state.state === 'on' ? 'turn_off' : 'turn_on';
+    
+    this._hass.callService(domain, service, { entity_id: entityId });
+    
+    // Обновляем состояние в модальном окне
+    setTimeout(() => {
+      this.updateDeviceCard(entityId);
+    }, 500);
+  }
+
+  updateDeviceCard(entityId) {
+    const card = this.shadowRoot.querySelector(`[data-entity-id="${entityId}"]`);
+    if (card) {
+      const state = this._hass.states[entityId];
+      if (state) {
+        const deviceState = state.state;
+        const isOn = deviceState === 'on';
+        const isUnavailable = deviceState === 'unavailable';
+
+        const stateElement = card.querySelector('.device-state');
+        const toggleBtn = card.querySelector('.device-toggle');
+
+        stateElement.textContent = this.getStateText(deviceState);
+        stateElement.className = `device-state ${deviceState}`;
+        
+        toggleBtn.textContent = isOn ? 'Выключить' : 'Включить';
+        toggleBtn.disabled = isUnavailable;
+      }
+    }
+  }
+
+  closeDevicesModal() {
+    const modal = this.shadowRoot.getElementById('devicesModal');
+    modal.classList.remove('show');
   }
 
   static getStubConfig() {

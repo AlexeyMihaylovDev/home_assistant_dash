@@ -1,0 +1,179 @@
+# ════════════════════════════════════════════════════════════════
+# ВАША КОНФИГУРАЦИЯ ДАШБОРДА
+# Точная копия с вашего скриншота с вашими реальными устройствами
+# ════════════════════════════════════════════════════════════════
+
+type: custom:smart-home-dashboard-card
+title: Умный Дом - Полная Версия
+
+# Виджет погоды
+weather_entity: weather.forecast_home
+
+# ════════════════════════════════════════════════════════════════
+# КОМНАТЫ (как на вашем скриншоте)
+# ════════════════════════════════════════════════════════════════
+
+rooms:
+  # 🛋️ Гостиная (סלון)
+  - id: living_room
+    name: Гостиная
+    entities:
+      # Освещение гостиной
+      - switch.spvtym_bslvn_pynt_vkl_switch_1      # Спот 1
+      - switch.spvtym_bslvn_pynt_vkl_switch_2      # Спот 2
+      - switch.mnvrvt_slvn_switch_1                # Лампа 1
+      - switch.mnvrvt_slvn_switch_2                # Лампа 2
+      - switch.mnvrvt_slvn_switch_3                # Лампа 3
+      # Шторы и жалюзи
+      - cover.vylvnvt_curtain                      # Шторы
+      - cover.trys_slvn_curtain                    # Жалюзи
+      - light.vylvn_ldym                           # LED подсветка штор
+      - light.trys_slvn_backlight                  # Подсветка жалюзи
+      # Датчик движения
+      - binary_sensor.khyyshn_tnv_h_slvn_motion    # Датчик движения
+
+  # 🛏️ Спальня (חדר שינה)
+  - id: bedroom
+    name: Спальня
+    entities:
+      # Освещение спальни
+      - switch.vr_khdr_lvn_switch_1                # Свет комнаты
+      # Климат
+      - climate.r2                                  # Бойлер/обогреватель
+      # Можно добавить другие устройства спальни
+
+  # 🏠 Детская (חדר ילדים)
+  - id: kids_room
+    name: Детская
+    entities:
+      - binary_sensor.khyyshn_tnv_h_khdr_mtbgr_motion  # Датчик движения подростка
+
+  # 🍳 Кухня (מטבח)
+  - id: kitchen
+    name: Кухня
+    entities:
+      - switch.mtbkh_switch_1_2                    # Свет кухни
+      # Примечание: switch.mtbkh_switch_1 недоступен (unavailable)
+
+  # 🚿 Ванная (שירותים)
+  - id: bathroom
+    name: Ванная
+    entities:
+      # Ванная комната общая
+      - switch.shrvtym_klly_switch_1               # Свет 1
+      - switch.shrvtym_klly_switch_2               # Свет 2
+      - switch.shrvtym_klly_switch_3               # Свет 3
+      - binary_sensor.khyyshn_nvkkhvt_shyrvtym_klly_motion  # Датчик присутствия
+      # Ванная родителей
+      - switch.shyrvtym_hvrym_switch_1             # Свет родительской ванной
+      - binary_sensor.khyyshn_tnv_h_shyrvty_hvrym_motion   # Датчик движения
+      # Гостевой туалет
+      - switch.shyrvty_vrkhym_switch_1             # Свет 1
+      - switch.shyrvty_vrkhym_switch_2             # Свет 2
+
+  # 💼 Кабинет
+  - id: office
+    name: Кабинет
+    entities:
+      # Добавьте устройства кабинета если есть
+      - sun.sun  # Временно, замените на реальные устройства
+
+  # 🏠 Прихожая (כניסה)
+  - id: hallway
+    name: Прихожая
+    entities:
+      - switch.nvrt_knysh_switch_1                 # Свет при входе
+
+  # 🚗 Гараж
+  - id: garage
+    name: Гараж
+    entities:
+      # Добавьте устройства гаража если есть
+      - sun.sun  # Временно, замените на реальные устройства
+
+  # 🌿 Сад/Улица (חוץ)
+  - id: garden
+    name: Сад
+    entities:
+      # Наружное освещение
+      - switch.khvts_switch_1                      # Свет 1
+      - switch.khvts_switch_2                      # Свет 2
+      - switch.khvts_switch_3                      # Свет 3
+      - switch.khvts_switch_4                      # Свет 4
+      # Датчик дождя
+      - binary_sensor.rainwater_detection_sensor_occupancy  # Датчик дождя
+
+# ════════════════════════════════════════════════════════════════
+# БЫСТРЫЕ ДЕЙСТВИЯ (как на вашем скриншоте)
+# ════════════════════════════════════════════════════════════════
+
+quick_actions:
+  # Освещение
+  - name: Все включить
+    icon: 💡
+    service: scene.turn_on
+    entity_id: scene.turn_all_on
+
+  - name: Все выключить
+    icon: 🌙
+    service: scene.turn_on
+    entity_id: scene.turn_all_off
+
+  # Сцены по времени суток
+  - name: Доброе утро
+    icon: 🌅
+    service: script.turn_on
+    entity_id: script.good_morning  # Нужно создать этот скрипт
+
+  - name: Рабочий день
+    icon: 💼
+    service: script.turn_on
+    entity_id: script.work_mode  # Нужно создать этот скрипт
+
+  - name: Вечер
+    icon: 🌆
+    service: script.turn_on
+    entity_id: script.evening  # Нужно создать этот скрипт
+
+  - name: Спокойной ночи
+    icon: 😴
+    service: script.turn_on
+    entity_id: script.good_night  # Нужно создать этот скрипт
+
+  # Специальные режимы
+  - name: Режим кино
+    icon: 🎬
+    service: script.turn_on
+    entity_id: script.movie_mode  # Нужно создать этот скрипт
+
+  - name: Вечеринка
+    icon: 🎉
+    service: script.turn_on
+    entity_id: script.party_mode  # Нужно создать этот скрипт
+
+  - name: Романтика
+    icon: ❤️
+    service: script.turn_on
+    entity_id: script.romantic_mode  # Нужно создать этот скрипт
+
+  - name: Чтение
+    icon: 📚
+    service: script.turn_on
+    entity_id: script.reading_mode  # Нужно создать этот скрипт
+
+  # Системные действия
+  - name: Уборка
+    icon: 🧹
+    service: script.turn_on
+    entity_id: script.cleaning  # Если есть робот-пылесос
+
+  - name: Климат авто
+    icon: ❄️
+    service: climate.set_hvac_mode
+    entity_id: climate.r2  # Ваш бойлер
+
+  - name: Полив
+    icon: 💧
+    service: switch.turn_on
+    entity_id: switch.khvts_switch_1  # Или назначьте на нужный переключатель
+

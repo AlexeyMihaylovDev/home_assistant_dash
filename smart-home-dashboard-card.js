@@ -2,6 +2,8 @@ class SmartHomeDashboardCard extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this.updateTime();
+    setInterval(() => this.updateTime(), 1000);
   }
 
   setConfig(config) {
@@ -17,7 +19,17 @@ class SmartHomeDashboardCard extends HTMLElement {
   }
 
   getCardSize() {
-    return 6;
+    return 8;
+  }
+
+  updateTime() {
+    this.currentTime = new Date();
+    if (this.shadowRoot && this.shadowRoot.querySelector('.clock-time')) {
+      this.shadowRoot.querySelector('.clock-time').textContent = 
+        this.currentTime.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+      this.shadowRoot.querySelector('.clock-date').textContent = 
+        this.currentTime.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' });
+    }
   }
 
   render() {
@@ -32,53 +44,203 @@ class SmartHomeDashboardCard extends HTMLElement {
       <style>
         :host {
           display: block;
-          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
-        .dashboard-container {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .dashboard-wrapper {
+          display: flex;
+          min-height: 600px;
+          background: linear-gradient(135deg, #ff0844 0%, #ffb199 50%, #ffd89b 100%);
           border-radius: 24px;
-          padding: 32px;
+          overflow: hidden;
           box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        /* ═══════════════════════════════════════
+           ЛЕВАЯ БОКОВАЯ ПАНЕЛЬ
+           ═══════════════════════════════════════ */
+        .sidebar {
+          width: 280px;
+          background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+          padding: 32px 24px;
+          display: flex;
+          flex-direction: column;
           color: white;
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
         }
 
-        .dashboard-header {
+        /* Часы */
+        .clock {
           margin-bottom: 32px;
-          text-align: center;
         }
 
-        .dashboard-title {
+        .clock-time {
+          font-size: 48px;
+          font-weight: 700;
+          margin: 0;
+          line-height: 1;
+          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .clock-date {
+          font-size: 14px;
+          opacity: 0.9;
+          margin-top: 8px;
+        }
+
+        .week-info {
+          font-size: 13px;
+          opacity: 0.8;
+          margin-top: 4px;
+        }
+
+        /* Приветствие */
+        .greeting {
+          font-size: 16px;
+          margin: 16px 0;
+          padding: 12px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
+          backdrop-filter: blur(10px);
+        }
+
+        /* Погода на боковой панели */
+        .sidebar-weather {
+          background: rgba(255, 255, 255, 0.15);
+          backdrop-filter: blur(10px);
+          border-radius: 16px;
+          padding: 16px;
+          margin-bottom: 24px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .weather-main {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .weather-icon-big {
+          font-size: 48px;
+        }
+
+        .weather-temp-big {
           font-size: 36px;
           font-weight: 700;
-          margin: 0 0 8px 0;
-          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-          background: linear-gradient(90deg, #ffffff, #e0e7ff);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
         }
 
-        .dashboard-subtitle {
-          font-size: 16px;
+        .weather-details {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+          margin-top: 12px;
+          font-size: 12px;
           opacity: 0.9;
-          font-weight: 300;
+        }
+
+        .weather-detail {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        /* Системная информация */
+        .system-info {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          margin-top: 24px;
+        }
+
+        .system-stat {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
+          padding: 12px;
+          backdrop-filter: blur(10px);
+        }
+
+        .system-stat-label {
+          font-size: 11px;
+          opacity: 0.8;
+          margin-bottom: 4px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .system-stat-value {
+          font-size: 18px;
+          font-weight: 600;
+        }
+
+        /* Иконка внизу */
+        .sidebar-footer {
+          margin-top: auto;
+          padding-top: 24px;
+          text-align: center;
+          opacity: 0.6;
+        }
+
+        .sidebar-footer svg {
+          width: 32px;
+          height: 32px;
+        }
+
+        /* ═══════════════════════════════════════
+           ОСНОВНАЯ ОБЛАСТЬ
+           ═══════════════════════════════════════ */
+        .main-content {
+          flex: 1;
+          padding: 32px;
+          overflow-y: auto;
+          max-height: 800px;
+        }
+
+        .content-header {
+          margin-bottom: 32px;
+        }
+
+        .content-title {
+          font-size: 32px;
+          font-weight: 700;
+          margin: 0;
+          color: white;
+          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-subtitle {
+          font-size: 16px;
+          color: rgba(255, 255, 255, 0.9);
+          margin-top: 8px;
+        }
+
+        /* Сетка комнат */
+        .rooms-section {
+          margin-bottom: 32px;
+        }
+
+        .section-title {
+          font-size: 20px;
+          font-weight: 600;
+          color: white;
+          margin-bottom: 16px;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .rooms-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-          gap: 20px;
-          margin-bottom: 24px;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          gap: 16px;
+          margin-bottom: 32px;
         }
 
         .room-card {
-          background: rgba(255, 255, 255, 0.15);
+          background: rgba(255, 255, 255, 0.25);
           backdrop-filter: blur(10px);
-          border-radius: 20px;
-          padding: 24px;
+          border-radius: 16px;
+          padding: 20px;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.3);
           cursor: pointer;
           position: relative;
           overflow: hidden;
@@ -91,15 +253,15 @@ class SmartHomeDashboardCard extends HTMLElement {
           left: 0;
           right: 0;
           bottom: 0;
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
           opacity: 0;
           transition: opacity 0.3s;
         }
 
         .room-card:hover {
-          transform: translateY(-8px);
-          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-          border-color: rgba(255, 255, 255, 0.4);
+          transform: translateY(-4px);
+          box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+          border-color: rgba(255, 255, 255, 0.5);
         }
 
         .room-card:hover::before {
@@ -109,19 +271,19 @@ class SmartHomeDashboardCard extends HTMLElement {
         .room-header {
           display: flex;
           align-items: center;
-          margin-bottom: 16px;
+          margin-bottom: 12px;
         }
 
         .room-icon {
-          font-size: 32px;
-          margin-right: 16px;
-          width: 56px;
-          height: 56px;
+          font-size: 28px;
+          margin-right: 12px;
+          width: 48px;
+          height: 48px;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: rgba(255, 255, 255, 0.2);
-          border-radius: 16px;
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 12px;
           backdrop-filter: blur(5px);
         }
 
@@ -130,36 +292,39 @@ class SmartHomeDashboardCard extends HTMLElement {
         }
 
         .room-name {
-          font-size: 20px;
+          font-size: 16px;
           font-weight: 600;
-          margin: 0 0 4px 0;
+          margin: 0;
+          color: white;
         }
 
         .room-devices-count {
-          font-size: 14px;
-          opacity: 0.8;
+          font-size: 12px;
+          color: rgba(255, 255, 255, 0.8);
+          margin-top: 2px;
         }
 
         .room-status {
           display: flex;
-          gap: 12px;
-          margin-top: 16px;
+          gap: 8px;
+          margin-top: 12px;
           flex-wrap: wrap;
         }
 
         .status-badge {
           display: inline-flex;
           align-items: center;
-          padding: 6px 12px;
-          background: rgba(255, 255, 255, 0.25);
-          border-radius: 12px;
-          font-size: 13px;
+          padding: 4px 10px;
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 8px;
+          font-size: 11px;
           font-weight: 500;
+          color: white;
           backdrop-filter: blur(5px);
         }
 
         .status-badge.on {
-          background: rgba(16, 185, 129, 0.4);
+          background: rgba(16, 185, 129, 0.5);
         }
 
         .status-badge.off {
@@ -167,10 +332,10 @@ class SmartHomeDashboardCard extends HTMLElement {
         }
 
         .status-indicator {
-          width: 8px;
-          height: 8px;
+          width: 6px;
+          height: 6px;
           border-radius: 50%;
-          margin-right: 6px;
+          margin-right: 4px;
           animation: pulse 2s infinite;
         }
 
@@ -179,7 +344,7 @@ class SmartHomeDashboardCard extends HTMLElement {
         }
 
         .status-indicator.off {
-          background: #6b7280;
+          background: #9ca3af;
         }
 
         @keyframes pulse {
@@ -191,31 +356,34 @@ class SmartHomeDashboardCard extends HTMLElement {
           }
         }
 
+        /* Быстрые действия */
         .quick-actions {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.2);
           backdrop-filter: blur(10px);
           border-radius: 20px;
           padding: 24px;
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          margin-top: 24px;
         }
 
         .quick-actions-title {
           font-size: 18px;
           font-weight: 600;
           margin: 0 0 16px 0;
+          color: white;
         }
 
         .actions-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
           gap: 12px;
         }
 
         .action-button {
-          background: rgba(255, 255, 255, 0.2);
+          background: rgba(255, 255, 255, 0.25);
           border: none;
-          border-radius: 16px;
-          padding: 16px;
+          border-radius: 12px;
+          padding: 16px 12px;
           color: white;
           cursor: pointer;
           transition: all 0.3s;
@@ -223,14 +391,16 @@ class SmartHomeDashboardCard extends HTMLElement {
           flex-direction: column;
           align-items: center;
           gap: 8px;
-          font-size: 14px;
+          font-size: 13px;
           font-weight: 500;
           backdrop-filter: blur(5px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .action-button:hover {
-          background: rgba(255, 255, 255, 0.3);
+          background: rgba(255, 255, 255, 0.35);
           transform: scale(1.05);
+          border-color: rgba(255, 255, 255, 0.4);
         }
 
         .action-button:active {
@@ -241,40 +411,34 @@ class SmartHomeDashboardCard extends HTMLElement {
           font-size: 24px;
         }
 
-        .weather-widget {
-          background: rgba(255, 255, 255, 0.15);
-          backdrop-filter: blur(10px);
-          border-radius: 20px;
-          padding: 20px;
-          margin-bottom: 20px;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
+        /* Адаптивность */
+        @media (max-width: 1024px) {
+          .dashboard-wrapper {
+            flex-direction: column;
+          }
 
-        .weather-info {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
+          .sidebar {
+            width: 100%;
+            padding: 24px;
+          }
 
-        .weather-icon {
-          font-size: 48px;
-        }
+          .clock-time {
+            font-size: 36px;
+          }
 
-        .weather-temp {
-          font-size: 42px;
-          font-weight: 700;
-        }
+          .sidebar-weather {
+            margin-bottom: 16px;
+          }
 
-        .weather-description {
-          font-size: 16px;
-          opacity: 0.9;
+          .system-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+          }
         }
 
         @media (max-width: 768px) {
-          .dashboard-container {
+          .main-content {
             padding: 20px;
           }
 
@@ -282,26 +446,70 @@ class SmartHomeDashboardCard extends HTMLElement {
             grid-template-columns: 1fr;
           }
 
-          .dashboard-title {
-            font-size: 28px;
+          .content-title {
+            font-size: 24px;
           }
         }
       </style>
 
       <ha-card>
-        <div class="dashboard-container">
-          <div class="dashboard-header">
-            <h1 class="dashboard-title">${title}</h1>
-            <p class="dashboard-subtitle">🏠 Управление вашим умным домом</p>
+        <div class="dashboard-wrapper">
+          <!-- ЛЕВАЯ БОКОВАЯ ПАНЕЛЬ -->
+          <div class="sidebar">
+            <!-- Часы -->
+            <div class="clock">
+              <div class="clock-time">${this.currentTime ? this.currentTime.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) : '00:00'}</div>
+              <div class="clock-date">${this.currentTime ? this.currentTime.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' }) : ''}</div>
+              <div class="week-info">Неделя ${this.getWeekNumber()}</div>
+            </div>
+
+            <!-- Приветствие -->
+            <div class="greeting">
+              ${this.getGreeting()} 😊
+            </div>
+
+            <!-- Погода -->
+            ${this.renderSidebarWeather()}
+
+            <!-- Системная информация -->
+            <div class="system-info">
+              <div class="system-stat">
+                <div class="system-stat-label">Активные</div>
+                <div class="system-stat-value">${this.getActiveDevices()} шт</div>
+              </div>
+              <div class="system-stat">
+                <div class="system-stat-label">Комнаты</div>
+                <div class="system-stat-value">${rooms.length}</div>
+              </div>
+            </div>
+
+            <!-- Иконка Home Assistant -->
+            <div class="sidebar-footer">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21.8 13h-2.8c0 0-0.2-0.9-0.5-1.4-0.3-0.5-0.7-1-1.2-1.4-0.5-0.4-1.1-0.7-1.8-0.9-0.7-0.2-1.4-0.3-2.1-0.3s-1.5 0.1-2.2 0.3c-0.7 0.2-1.3 0.5-1.8 0.9-0.5 0.4-0.9 0.9-1.2 1.4-0.3 0.5-0.5 1.1-0.6 1.8h-2.8l-0.8 1.5 2.8 0c0.1 0.7 0.3 1.3 0.6 1.8 0.3 0.5 0.7 1 1.2 1.4 0.5 0.4 1.1 0.7 1.8 0.9 0.7 0.2 1.4 0.3 2.2 0.3s1.5-0.1 2.1-0.3c0.7-0.2 1.3-0.5 1.8-0.9 0.5-0.4 0.9-0.9 1.2-1.4 0.3-0.5 0.5-1.1 0.5-1.8h2.8l0.8-1.5z"/>
+              </svg>
+            </div>
           </div>
 
-          ${this.renderWeatherWidget()}
-          
-          <div class="rooms-grid">
-            ${rooms.map(room => this.renderRoom(room)).join('')}
-          </div>
+          <!-- ОСНОВНАЯ ОБЛАСТЬ -->
+          <div class="main-content">
+            <!-- Заголовок -->
+            <div class="content-header">
+              <h1 class="content-title">${title}</h1>
+              <div class="content-subtitle">🏠 Управление вашим умным домом</div>
+            </div>
 
-          ${this.renderQuickActions()}
+            <!-- Комнаты -->
+            <div class="rooms-section">
+              <h2 class="section-title">Комнаты</h2>
+              <div class="rooms-grid">
+                ${rooms.map(room => this.renderRoom(room)).join('')}
+              </div>
+            </div>
+
+            <!-- Быстрые действия -->
+            ${this.renderQuickActions()}
+          </div>
         </div>
       </ha-card>
     `;
@@ -309,7 +517,37 @@ class SmartHomeDashboardCard extends HTMLElement {
     this.attachEventListeners();
   }
 
-  renderWeatherWidget() {
+  getWeekNumber() {
+    const date = this.currentTime || new Date();
+    const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+    const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+    return Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+  }
+
+  getGreeting() {
+    const hour = (this.currentTime || new Date()).getHours();
+    if (hour < 6) return 'Доброй ночи';
+    if (hour < 12) return 'Доброе утро';
+    if (hour < 18) return 'Добрый день';
+    return 'Добрый вечер';
+  }
+
+  getActiveDevices() {
+    const rooms = this.config.rooms || [];
+    let count = 0;
+    rooms.forEach(room => {
+      const entities = room.entities || [];
+      entities.forEach(entityId => {
+        const state = this._hass.states[entityId];
+        if (state && state.state === 'on') {
+          count++;
+        }
+      });
+    });
+    return count;
+  }
+
+  renderSidebarWeather() {
     const weatherEntity = this.config.weather_entity;
     if (!weatherEntity || !this._hass.states[weatherEntity]) {
       return '';
@@ -318,6 +556,9 @@ class SmartHomeDashboardCard extends HTMLElement {
     const weather = this._hass.states[weatherEntity];
     const temp = Math.round(weather.attributes.temperature);
     const description = weather.state;
+    const humidity = weather.attributes.humidity;
+    const pressure = weather.attributes.pressure;
+    const windSpeed = Math.round(weather.attributes.wind_speed);
     
     const weatherIcons = {
       'sunny': '☀️',
@@ -326,21 +567,44 @@ class SmartHomeDashboardCard extends HTMLElement {
       'rainy': '🌧️',
       'snowy': '❄️',
       'fog': '🌫️',
+      'partlycloudy': '⛅',
     };
     
     const icon = weatherIcons[description] || '🌤️';
+    const descriptionRu = {
+      'sunny': 'Солнечно',
+      'clear-night': 'Ясная ночь',
+      'cloudy': 'Облачно',
+      'rainy': 'Дождь',
+      'snowy': 'Снег',
+      'fog': 'Туман',
+      'partlycloudy': 'Переменная облачность',
+    }[description] || description;
 
     return `
-      <div class="weather-widget">
-        <div class="weather-info">
-          <div class="weather-icon">${icon}</div>
+      <div class="sidebar-weather">
+        <div class="weather-main">
+          <div class="weather-icon-big">${icon}</div>
           <div>
-            <div class="weather-temp">${temp}°</div>
-            <div class="weather-description">${description}</div>
+            <div class="weather-temp-big">${temp}°</div>
+            <div style="font-size: 13px; opacity: 0.9;">${descriptionRu}</div>
           </div>
+        </div>
+        <div class="weather-details">
+          <div class="weather-detail">💧 ${humidity}%</div>
+          <div class="weather-detail">🌡️ ${pressure} hPa</div>
+          <div class="weather-detail">💨 ${windSpeed} км/ч</div>
+          <div class="weather-detail">🧭 ${this.getWindDirection(weather.attributes.wind_bearing)}</div>
         </div>
       </div>
     `;
+  }
+
+  getWindDirection(bearing) {
+    if (!bearing) return '—';
+    const directions = ['С', 'СВ', 'В', 'ЮВ', 'Ю', 'ЮЗ', 'З', 'СЗ'];
+    const index = Math.round(bearing / 45) % 8;
+    return directions[index];
   }
 
   renderRoom(room) {
@@ -358,6 +622,8 @@ class SmartHomeDashboardCard extends HTMLElement {
       'office': '💼',
       'garage': '🚗',
       'garden': '🌿',
+      'hallway': '🚪',
+      'kids_room': '🧸',
     };
 
     const icon = roomIcons[room.id] || '🏠';
@@ -374,11 +640,11 @@ class SmartHomeDashboardCard extends HTMLElement {
         <div class="room-status">
           <span class="status-badge ${onCount > 0 ? 'on' : 'off'}">
             <span class="status-indicator ${onCount > 0 ? 'on' : 'off'}"></span>
-            ${onCount} включено
+            ${onCount} вкл
           </span>
           <span class="status-badge ${onCount === 0 ? 'on' : 'off'}">
             <span class="status-indicator ${onCount === 0 ? 'on' : 'off'}"></span>
-            ${entities.length - onCount} выключено
+            ${entities.length - onCount} выкл
           </span>
         </div>
       </div>
@@ -414,7 +680,6 @@ class SmartHomeDashboardCard extends HTMLElement {
         const roomId = e.currentTarget.dataset.roomId;
         const room = this.config.rooms.find(r => r.id === roomId);
         if (room && room.entities && room.entities.length > 0) {
-          // Toggle all entities in room
           room.entities.forEach(entityId => {
             const state = this._hass.states[entityId];
             if (state) {
@@ -443,6 +708,7 @@ class SmartHomeDashboardCard extends HTMLElement {
   static getStubConfig() {
     return {
       title: 'Умный Дом',
+      weather_entity: 'weather.forecast_home',
       rooms: [
         {
           id: 'living_room',
@@ -461,8 +727,7 @@ window.customCards = window.customCards || [];
 window.customCards.push({
   type: 'smart-home-dashboard-card',
   name: 'Smart Home Dashboard',
-  description: 'Современный цветной дашборд для управления умным домом',
+  description: 'Современный цветной дашборд для управления умным домом с боковой панелью',
   preview: true,
   documentationURL: 'https://github.com/your-repo/smart-home-dashboard-card',
 });
-

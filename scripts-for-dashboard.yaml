@@ -1,0 +1,275 @@
+# ════════════════════════════════════════════════════════════════
+# СКРИПТЫ ДЛЯ БЫСТРЫХ ДЕЙСТВИЙ
+# Добавьте эти скрипты в ваш configuration.yaml или scripts.yaml
+# ════════════════════════════════════════════════════════════════
+
+script:
+  # ═══════════════════════════════════════════════
+  # ДОБРОЕ УТРО 🌅
+  # ═══════════════════════════════════════════════
+  good_morning:
+    alias: Доброе утро
+    sequence:
+      # Открыть шторы
+      - service: cover.open_cover
+        target:
+          entity_id:
+            - cover.vylvnvt_curtain
+            - cover.trys_slvn_curtain
+      
+      # Включить свет в гостиной (мягкий)
+      - service: switch.turn_on
+        target:
+          entity_id:
+            - switch.mnvrvt_slvn_switch_1
+      
+      # Включить свет на кухне
+      - service: switch.turn_on
+        target:
+          entity_id:
+            - switch.mtbkh_switch_1_2
+      
+      # Включить свет в прихожей
+      - service: switch.turn_on
+        target:
+          entity_id:
+            - switch.nvrt_knysh_switch_1
+
+  # ═══════════════════════════════════════════════
+  # РАБОЧИЙ РЕЖИМ 💼
+  # ═══════════════════════════════════════════════
+  work_mode:
+    alias: Рабочий режим
+    sequence:
+      # Включить основное освещение
+      - service: switch.turn_on
+        target:
+          entity_id:
+            - switch.spvtym_bslvn_pynt_vkl_switch_1
+            - switch.spvtym_bslvn_pynt_vkl_switch_2
+      
+      # Выключить декоративное освещение
+      - service: light.turn_off
+        target:
+          entity_id:
+            - light.vylvn_ldym
+            - light.trys_slvn_backlight
+
+  # ═══════════════════════════════════════════════
+  # ВЕЧЕР 🌆
+  # ═══════════════════════════════════════════════
+  evening:
+    alias: Вечер
+    sequence:
+      # Закрыть шторы
+      - service: cover.close_cover
+        target:
+          entity_id:
+            - cover.vylvnvt_curtain
+            - cover.trys_slvn_curtain
+      
+      # Включить мягкое освещение
+      - service: switch.turn_on
+        target:
+          entity_id:
+            - switch.mnvrvt_slvn_switch_1
+            - switch.mnvrvt_slvn_switch_2
+      
+      # Включить LED подсветку
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.vylvn_ldym
+            - light.trys_slvn_backlight
+      
+      # Выключить яркий свет
+      - service: switch.turn_off
+        target:
+          entity_id:
+            - switch.spvtym_bslvn_pynt_vkl_switch_1
+            - switch.spvtym_bslvn_pynt_vkl_switch_2
+
+  # ═══════════════════════════════════════════════
+  # СПОКОЙНОЙ НОЧИ 😴
+  # ═══════════════════════════════════════════════
+  good_night:
+    alias: Спокойной ночи
+    sequence:
+      # Выключить все освещение в гостиной
+      - service: switch.turn_off
+        target:
+          entity_id:
+            - switch.spvtym_bslvn_pynt_vkl_switch_1
+            - switch.spvtym_bslvn_pynt_vkl_switch_2
+            - switch.mnvrvt_slvn_switch_1
+            - switch.mnvrvt_slvn_switch_2
+            - switch.mnvrvt_slvn_switch_3
+      
+      # Выключить LED подсветку
+      - service: light.turn_off
+        target:
+          entity_id:
+            - light.vylvn_ldym
+            - light.trys_slvn_backlight
+      
+      # Выключить освещение на кухне
+      - service: switch.turn_off
+        target:
+          entity_id:
+            - switch.mtbkh_switch_1_2
+      
+      # Выключить наружное освещение
+      - service: switch.turn_off
+        target:
+          entity_id:
+            - switch.khvts_switch_1
+            - switch.khvts_switch_2
+            - switch.khvts_switch_3
+            - switch.khvts_switch_4
+      
+      # Оставить только свет в прихожей (слабый)
+      - service: switch.turn_on
+        target:
+          entity_id:
+            - switch.nvrt_knysh_switch_1
+      
+      # Закрыть шторы
+      - service: cover.close_cover
+        target:
+          entity_id:
+            - cover.vylvnvt_curtain
+            - cover.trys_slvn_curtain
+
+  # ═══════════════════════════════════════════════
+  # РЕЖИМ КИНО 🎬
+  # ═══════════════════════════════════════════════
+  movie_mode:
+    alias: Режим кино
+    sequence:
+      # Закрыть шторы
+      - service: cover.close_cover
+        target:
+          entity_id:
+            - cover.vylvnvt_curtain
+            - cover.trys_slvn_curtain
+      
+      # Выключить основное освещение
+      - service: switch.turn_off
+        target:
+          entity_id:
+            - switch.spvtym_bslvn_pynt_vkl_switch_1
+            - switch.spvtym_bslvn_pynt_vkl_switch_2
+            - switch.mnvrvt_slvn_switch_1
+            - switch.mnvrvt_slvn_switch_2
+            - switch.mnvrvt_slvn_switch_3
+      
+      # Включить LED подсветку (слабая)
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.vylvn_ldym
+            - light.trys_slvn_backlight
+
+  # ═══════════════════════════════════════════════
+  # ВЕЧЕРИНКА 🎉
+  # ═══════════════════════════════════════════════
+  party_mode:
+    alias: Вечеринка
+    sequence:
+      # Включить всё освещение
+      - service: switch.turn_on
+        target:
+          entity_id:
+            - switch.spvtym_bslvn_pynt_vkl_switch_1
+            - switch.spvtym_bslvn_pynt_vkl_switch_2
+            - switch.mnvrvt_slvn_switch_1
+            - switch.mnvrvt_slvn_switch_2
+            - switch.mnvrvt_slvn_switch_3
+      
+      # Включить LED подсветку
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.vylvn_ldym
+            - light.trys_slvn_backlight
+
+  # ═══════════════════════════════════════════════
+  # РОМАНТИКА ❤️
+  # ═══════════════════════════════════════════════
+  romantic_mode:
+    alias: Романтика
+    sequence:
+      # Выключить яркое освещение
+      - service: switch.turn_off
+        target:
+          entity_id:
+            - switch.spvtym_bslvn_pynt_vkl_switch_1
+            - switch.spvtym_bslvn_pynt_vkl_switch_2
+      
+      # Включить одну лампу (мягкий свет)
+      - service: switch.turn_on
+        target:
+          entity_id:
+            - switch.mnvrvt_slvn_switch_1
+      
+      # Включить LED подсветку
+      - service: light.turn_on
+        target:
+          entity_id:
+            - light.vylvn_ldym
+            - light.trys_slvn_backlight
+      
+      # Закрыть шторы
+      - service: cover.close_cover
+        target:
+          entity_id:
+            - cover.vylvnvt_curtain
+            - cover.trys_slvn_curtain
+
+  # ═══════════════════════════════════════════════
+  # ЧТЕНИЕ 📚
+  # ═══════════════════════════════════════════════
+  reading_mode:
+    alias: Чтение
+    sequence:
+      # Включить яркое освещение
+      - service: switch.turn_on
+        target:
+          entity_id:
+            - switch.spvtym_bslvn_pynt_vkl_switch_1
+            - switch.mnvrvt_slvn_switch_1
+            - switch.mnvrvt_slvn_switch_2
+      
+      # Выключить LED подсветку (не отвлекает)
+      - service: light.turn_off
+        target:
+          entity_id:
+            - light.vylvn_ldym
+            - light.trys_slvn_backlight
+
+  # ═══════════════════════════════════════════════
+  # УБОРКА 🧹
+  # ═══════════════════════════════════════════════
+  cleaning:
+    alias: Уборка
+    sequence:
+      # Включить весь свет для уборки
+      - service: switch.turn_on
+        target:
+          entity_id:
+            - switch.spvtym_bslvn_pynt_vkl_switch_1
+            - switch.spvtym_bslvn_pynt_vkl_switch_2
+            - switch.mnvrvt_slvn_switch_1
+            - switch.mnvrvt_slvn_switch_2
+            - switch.mnvrvt_slvn_switch_3
+            - switch.mtbkh_switch_1_2
+            - switch.shrvtym_klly_switch_1
+            - switch.shrvtym_klly_switch_2
+      
+      # Открыть шторы (больше света)
+      - service: cover.open_cover
+        target:
+          entity_id:
+            - cover.vylvnvt_curtain
+            - cover.trys_slvn_curtain
+
